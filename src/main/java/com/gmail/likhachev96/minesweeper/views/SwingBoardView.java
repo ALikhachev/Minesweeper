@@ -31,6 +31,9 @@ public class SwingBoardView
     private JButton[][] boardButtons;
     private JButton newGameButton;
 
+    private JLabel flagsCounter = new JLabel();
+    private JLabel emptyContainer = new JLabel();
+
     public SwingBoardView(BoardController controller) throws IOException {
         this.controller = controller;
         this.controller.addView(this);
@@ -43,6 +46,7 @@ public class SwingBoardView
     @Override
     public void setBoard(Board board) {
         this.board = board;
+        this.flagsCounter.setIcon(UIAssets.getNumber(this.board.getMinesCount()));
         this.gamePanel.setPreferredSize(new Dimension(CELL_SIZE * this.board.getWidth(), CELL_SIZE * this.board.getHeight()));
         if (this.gamePanel.getLayout() instanceof GridLayout) {
             ((GridLayout) this.gamePanel.getLayout()).setColumns(this.board.getWidth());
@@ -60,6 +64,8 @@ public class SwingBoardView
         for (int y = 0; y < this.board.getHeight(); y++) {
             for (int x = 0; x < this.board.getWidth(); x++) {
                 this.boardButtons[x][y] = new JButton();
+
+                this.boardButtons[x][y].setFocusPainted(false);
                 this.boardButtons[x][y].setPreferredSize(new Dimension(CELL_SIZE, CELL_SIZE));
                 this.boardButtons[x][y].setIcon(CellsAssets.getUnrevealedIcon());
 
@@ -71,10 +77,12 @@ public class SwingBoardView
             }
         }
         this.pack();
+        this.setLocationRelativeTo(null); // centering
     }
 
     @Override
     public void redraw() {
+        int flagsSet = 0;
         if (this.board.isGameOver() && !this.board.isGameWon()) {
             newGameButton.setIcon(UIAssets.NEW_GAME_GAMEOVER);
         }
@@ -83,6 +91,7 @@ public class SwingBoardView
                 Cell cell = this.controller.getCell(x, y);
 
                 if (cell.isMarked()) {
+                    ++flagsSet;
                     if (!this.board.isGameOver()) this.boardButtons[x][y].setIcon(CellsAssets.getFlagIcon());
                     else this.boardButtons[x][y].setIcon(CellsAssets.getFlagIcon(cell.isMine()));
                 } else if (cell.isMine() && (cell.isRevealed() || board.isGameOver())) {
@@ -96,21 +105,24 @@ public class SwingBoardView
                 }
             }
         }
+        flagsCounter.setIcon(UIAssets.getNumber(this.board.getMinesCount() - flagsSet));
     }
 
     private void initializeWindow() throws IOException {
-        this.setLocationByPlatform(true);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setResizable(false);
         GridLayout gameLayout = new GridLayout();
         this.mainPanel = new JPanel();
-        this.mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
+        this.mainPanel.setLayout(new BorderLayout());
         this.gamePanel = new JPanel(gameLayout);
 
         // New game button
         newGameButton = createNewGameButton();
         newGameButton.setBorder(BorderFactory.createEmptyBorder());
-        mainPanel.add(newGameButton);
+        mainPanel.add(newGameButton, BorderLayout.CENTER);
+        mainPanel.add(flagsCounter, BorderLayout.LINE_START);
+        emptyContainer.setIcon(UIAssets.EMPTY);
+        mainPanel.add(emptyContainer, BorderLayout.LINE_END);
         newGameButton.setSize(30, 30);
         // /New game button
 
@@ -123,6 +135,7 @@ public class SwingBoardView
 
     private JButton createNewGameButton() throws IOException {
         JButton button = new JButton(UIAssets.NEW_GAME);
+        button.setFocusPainted(false);
         button.addMouseListener(new MouseAdapter() {
             private Icon staticIcon;
             private boolean hovered;
@@ -223,7 +236,7 @@ public class SwingBoardView
         StringBuilder builder = new StringBuilder();
         int i = 0;
         for (Score score : scores) {
-            builder.append(i).append(score.getUsername()).append(": ").append(score.getTimeInSeconds()).append('\n');
+            builder.append(score.getUsername()).append(": ").append(score.getTimeInSeconds()).append('\n');
             if (++i == 10) break; // show only first 10
         }
         if (scores.isEmpty()) {
