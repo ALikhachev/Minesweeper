@@ -33,3 +33,5 @@ out/*
 workdir/*
 
 /dependency-reduced-pom.xml
+
+/minesweeper_scores.bin

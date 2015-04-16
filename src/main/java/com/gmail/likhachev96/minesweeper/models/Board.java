@@ -148,7 +148,7 @@ public class Board {
 
     private void saveScore() {
         List<Score> scores = getHighScores();
-        scores.add(new Score("User", getTimeToSolve()));
+        scores.add(new Score(System.getProperty("user.name"), getTimeToSolve()));
         saveHighScores(scores);
     }
 
@@ -198,7 +198,9 @@ public class Board {
 
     public static List<Score> getHighScores() {
         try {
-            FileInputStream fis = new FileInputStream("minesweeper_scores.bin");
+            File file = new File("minesweeper_scores.bin");
+            if (!file.isFile()) return new ArrayList<>();
+            FileInputStream fis = new FileInputStream(file);
             ObjectInputStream oin = new ObjectInputStream(fis);
             ArrayList<Score> highScores = (ArrayList<Score>) oin.readObject();
             return highScores;
