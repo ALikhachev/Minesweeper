@@ -1,8 +1,9 @@
 package com.gmail.likhachev96.minesweeper.models;
 
+import com.gmail.likhachev96.minesweeper.Minesweeper;
+
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -35,6 +36,7 @@ public class Board {
             }
         }
 
+        Minesweeper.LOGGER.info("Board initialized with size {}x{} and {} mines", width, height, minesCount);
         this.startTime = System.currentTimeMillis();
     }
 
@@ -66,7 +68,7 @@ public class Board {
         this.gameOver = gameOver;
     }
 
-    private void initMines(Cell clickedCell)     {
+    private void initMines(Cell clickedCell) {
         List<Cell> possibilities = this.board.stream().filter(cell -> !cell.equals(clickedCell)).collect(Collectors.toList());
 
         for (int i = 0; i < minesCount; i++) {
@@ -77,6 +79,7 @@ public class Board {
         }
 
         this.minesInitialized = true;
+        Minesweeper.LOGGER.info("Mines initialized (preventing mine on first click)");
     }
 
     private static Random rand = new Random();
@@ -120,11 +123,13 @@ public class Board {
                     this.setGameOver(true);
                     finishTime = System.currentTimeMillis();
                     saveScore();
+                    Minesweeper.LOGGER.info("User has won!");
                     return true;
                 }
 
                 if (cell.isMine()) {
                     this.setGameOver(true);
+                    Minesweeper.LOGGER.info("User has lost!");
                 } else if (cell.countNearestMines() == 0) {
                     // If it is 0, we expend
                     ArrayList<Cell> neighbors = this.getNeighbors(cell);
@@ -149,6 +154,7 @@ public class Board {
     private void saveScore() {
         List<Score> scores = getHighScores();
         scores.add(new Score(System.getProperty("user.name"), getTimeToSolve()));
+        Minesweeper.LOGGER.info("Time taken: {}", getTimeToSolve());
         saveHighScores(scores);
     }
 
@@ -199,13 +205,17 @@ public class Board {
     public static List<Score> getHighScores() {
         try {
             File file = new File("minesweeper_scores.bin");
-            if (!file.isFile()) return new ArrayList<>();
+            if (!file.isFile()) {
+                Minesweeper.LOGGER.info("There is no high scores list yet");
+                return new ArrayList<>();
+            }
             FileInputStream fis = new FileInputStream(file);
             ObjectInputStream oin = new ObjectInputStream(fis);
             ArrayList<Score> highScores = (ArrayList<Score>) oin.readObject();
+            Minesweeper.LOGGER.info("High scores list loaded successfully");
             return highScores;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            Minesweeper.LOGGER.error("Error occurred while loading high scores list");
             return new ArrayList<>();
         }
     }
@@ -217,7 +227,9 @@ public class Board {
             oos.writeObject(scores);
             oos.flush();
             oos.close();
-        } catch (Exception ignored) {
+            Minesweeper.LOGGER.info("High scores list saved successfully");
+        } catch (Exception ex) {
+            Minesweeper.LOGGER.error("Error occurred while saving high scores list");
         }
     }
 }

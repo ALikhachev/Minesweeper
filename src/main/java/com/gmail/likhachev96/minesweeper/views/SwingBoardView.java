@@ -26,7 +26,6 @@ public class SwingBoardView
 
     private Board board;
     private BoardController controller;
-    private JPanel mainPanel;
     private JPanel gamePanel;
     private JButton[][] boardButtons;
     private JButton newGameButton;
@@ -112,8 +111,8 @@ public class SwingBoardView
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setResizable(false);
         GridLayout gameLayout = new GridLayout();
-        this.mainPanel = new JPanel();
-        this.mainPanel.setLayout(new BorderLayout());
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
         this.gamePanel = new JPanel(gameLayout);
 
         // New game button
@@ -236,7 +235,7 @@ public class SwingBoardView
         StringBuilder builder = new StringBuilder();
         int i = 0;
         for (Score score : scores) {
-            builder.append(score.getUsername()).append(": ").append(score.getTimeInSeconds()).append('\n');
+            builder.append(score.getUsername()).append(": ").append(score.getTimeInSeconds()).append(" seconds\n");
             if (++i == 10) break; // show only first 10
         }
         if (scores.isEmpty()) {
