@@ -11,14 +11,14 @@ import java.util.List;
  */
 public interface IBoardView {
 
-    void setBoard(Board board);
+  void setBoard(Board board);
 
-    void redraw();
+  void redraw();
 
-    BoardController getController();
+  BoardController getController();
 
-    void showAbout();
+  void showAbout();
 
-    void showHighScores(List<Score> scores);
+  void showHighScores(List<Score> scores);
 
 }

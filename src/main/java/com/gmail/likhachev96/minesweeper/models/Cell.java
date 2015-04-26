@@ -6,60 +6,60 @@ import java.util.ArrayList;
  * Copyright (c) 2015 Alexander Likhachev.
  */
 public class Cell {
-    private final int x;
-    private final int y;
-    private final Board board;
+  private final int x;
+  private final int y;
+  private final Board board;
 
-    private boolean marked;
-    private boolean mine;
-    private boolean revealed;
-    private int numberOfNearestMines = 0;
+  private boolean marked;
+  private boolean mine;
+  private boolean revealed;
+  private int numberOfNearestMines = 0;
 
-    public Cell(Board board, int x, int y) {
-        this.board = board;
-        this.x = x;
-        this.y = y;
-    }
+  public Cell(Board board, int x, int y) {
+    this.board = board;
+    this.x = x;
+    this.y = y;
+  }
 
-    public boolean isMarked() {
-        return marked;
-    }
+  public boolean isMarked() {
+    return marked;
+  }
 
-    public void setMarked() {
-        this.marked = !this.marked;
-    }
+  public void setMarked() {
+    this.marked = !this.marked;
+  }
 
-    public boolean isMine() {
-        return mine;
-    }
+  public boolean isMine() {
+    return mine;
+  }
 
-    public void setMine() {
-        this.mine = true;
-        ArrayList<Cell> adjacents = this.board.getNeighbors(this);
-        adjacents.forEach(com.gmail.likhachev96.minesweeper.models.Cell::addMineAround);
-    }
+  public void setMine() {
+    this.mine = true;
+    ArrayList<Cell> adjacents = this.board.getNeighbors(this);
+    adjacents.forEach(com.gmail.likhachev96.minesweeper.models.Cell::addMineAround);
+  }
 
-    private void addMineAround() {
-        ++numberOfNearestMines;
-    }
+  private void addMineAround() {
+    ++numberOfNearestMines;
+  }
 
-    public boolean isRevealed() {
-        return revealed;
-    }
+  public boolean isRevealed() {
+    return revealed;
+  }
 
-    public void setRevealed() {
-        this.revealed = true;
-    }
+  public void setRevealed() {
+    this.revealed = true;
+  }
 
-    public int countNearestMines() {
-        return this.numberOfNearestMines;
-    }
+  public int countNearestMines() {
+    return this.numberOfNearestMines;
+  }
 
-    public int getX() {
-        return x;
-    }
+  public int getX() {
+    return x;
+  }
 
-    public int getY() {
-        return y;
-    }
+  public int getY() {
+    return y;
+  }
 }
