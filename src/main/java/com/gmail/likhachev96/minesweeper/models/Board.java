@@ -116,7 +116,7 @@ public class Board {
         }
         if (!cell.isMarked() && !this.isGameOver()) { // Marked square are protected
             if (!cell.isRevealed()) {
-                cell.setRevealed(true);
+                cell.setRevealed();
 
                 // Win condition
                 if (this.isGameWon()) {
@@ -183,7 +183,7 @@ public class Board {
 
     public Cell getCell(int x, int y) {
         if (isInBoard(x, y)) {
-            int index = geInternalIndex(x, y);
+            int index = getInternalIndex(x, y);
             return board.get(index);
         } else {
             return null;
@@ -194,7 +194,7 @@ public class Board {
         return (x >= 0 && y >= 0 && x < this.width && y < this.height);
     }
 
-    private int geInternalIndex(int x, int y) {
+    private int getInternalIndex(int x, int y) {
         return  y * this.width + x;
     }
 

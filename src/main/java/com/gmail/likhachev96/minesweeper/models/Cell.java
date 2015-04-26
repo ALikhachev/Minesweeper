@@ -47,8 +47,8 @@ public class Cell {
         return revealed;
     }
 
-    public void setRevealed(boolean revealed) {
-        this.revealed = revealed;
+    public void setRevealed() {
+        this.revealed = true;
     }
 
     public int countNearestMines() {
